@@ -13,17 +13,19 @@ type subImager interface {
 	SubImage(r image.Rectangle) image.Image
 }
 
-func CropImage(imgPath string) (croppedImage image.Image, err error) {
+func CropImage(imgPath string) (*image.Image, error) {
+
+	var croppedImage image.Image
 
 	imgType, err := getImgType(imgPath)
 	if err != nil {
-		return
+		return &croppedImage, err
 	}
 
 	img, err := os.Open(imgPath)
 
 	if err != nil {
-		return
+		return &croppedImage, err
 	}
 	defer img.Close()
 
@@ -37,7 +39,7 @@ func CropImage(imgPath string) (croppedImage image.Image, err error) {
 	}
 
 	if err != nil {
-		return
+		return &croppedImage, err
 	}
 
 	bounds := decodedImage.Bounds()
@@ -45,7 +47,8 @@ func CropImage(imgPath string) (croppedImage image.Image, err error) {
 
 	cropSize := image.Rect(0, 0, width/2, width/2)
 	croppedImage = decodedImage.(subImager).SubImage(cropSize)
-	return
+
+	return &croppedImage, err
 }
 
 func getImgType(imgPath string) (extension string, err error) {

@@ -11,11 +11,13 @@ import (
 	"github.com/spies36/GoCR_Worker/PreProcessing"
 )
 
-func main() {
-	client := gosseract.NewClient()
-	defer client.Close()
-	croppedImage, err := PreProcessing.CropImage("../../Downloads/Bill of Lading.jpg")
+const imgPath string = "../../Downloads/img.jpg"
 
+func main() {
+	ocr := gosseract.NewClient()
+	defer ocr.Close()
+
+	croppedImage, err := PreProcessing.CropImage(imgPath)
 	if err != nil {
 		fmt.Println(err.Error())
 		return
@@ -28,15 +30,14 @@ func main() {
 	}
 	writeJpegToDisc(binarizedImg, "../../Downloads/cropBinImg.jpg")
 
-	imgToProcess, err := imageToBytes(binarizedImg)
+	imgToProcess, err := imageToBytes(*binarizedImg)
 	if err != nil {
 		fmt.Println(err.Error())
 		return
 	}
 
-	client.SetImageFromBytes(imgToProcess)
-	fmt.Println(client.Languages)
-	text, err := client.Text()
+	ocr.SetImageFromBytes(imgToProcess)
+	text, err := ocr.Text()
 	if err != nil {
 		fmt.Println(err.Error())
 		return
@@ -55,9 +56,9 @@ func imageToBytes(img image.Image) ([]byte, error) {
 	return b.Bytes(), nil
 }
 
-func writeJpegToDisc(img image.Image, path string) {
+func writeJpegToDisc(img *image.Image, path string) {
 
-	imgByteArr, err := imageToBytes(img)
+	imgByteArr, err := imageToBytes(*img)
 	if err != nil {
 		fmt.Println(err.Error())
 		return
