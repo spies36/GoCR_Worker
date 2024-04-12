@@ -1,7 +1,6 @@
 package PreProcessing
 
 import (
-	"bytes"
 	"errors"
 	"image"
 	"image/jpeg"
@@ -14,7 +13,7 @@ type subImager interface {
 	SubImage(r image.Rectangle) image.Image
 }
 
-func CropImage(imgPath string) (imgBuffer []byte, err error) {
+func CropImage(imgPath string) (croppedImage image.Image, err error) {
 
 	imgType, err := getImgType(imgPath)
 	if err != nil {
@@ -44,27 +43,9 @@ func CropImage(imgPath string) (imgBuffer []byte, err error) {
 	bounds := decodedImage.Bounds()
 	width := bounds.Dx()
 
-	cropSize := image.Rect(0, 0, width/2+100, width/2+100)
-	cropSize = cropSize.Add(image.Point{100, 80})
-	croppedImage := decodedImage.(subImager).SubImage(cropSize)
-
-	imgBuffer, err = imageToBytes(croppedImage)
-
-	if err != nil {
-		return
-	}
-
+	cropSize := image.Rect(0, 0, width/2, width/2)
+	croppedImage = decodedImage.(subImager).SubImage(cropSize)
 	return
-}
-
-func imageToBytes(img image.Image) ([]byte, error) {
-	var b bytes.Buffer
-	err := jpeg.Encode(&b, img, nil)
-	if err != nil {
-		return nil, err
-	}
-
-	return b.Bytes(), nil
 }
 
 func getImgType(imgPath string) (extension string, err error) {
