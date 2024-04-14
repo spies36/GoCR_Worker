@@ -7,6 +7,7 @@ import (
 	"github.com/ernyoke/imger/threshold"
 )
 
+// Binarize image by converting
 func Binarize(imgPath string) (*image.Image, error) {
 
 	var binaryImg image.Image

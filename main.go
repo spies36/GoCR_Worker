@@ -8,6 +8,7 @@ import (
 	"os"
 
 	"github.com/otiai10/gosseract/v2"
+	"github.com/spies36/GoCR_Worker/FileHandling"
 	"github.com/spies36/GoCR_Worker/PreProcessing"
 )
 
@@ -17,20 +18,16 @@ func main() {
 	ocr := gosseract.NewClient()
 	defer ocr.Close()
 
-	croppedImage, err := PreProcessing.CropImage(imgPath)
+	img, err := FileHandling.GetFileAsImg(imgPath)
 	if err != nil {
 		fmt.Println(err.Error())
 		return
 	}
+
+	croppedImage := PreProcessing.CropImage(*img)
 	writeJpegToDisc(croppedImage, "../../Downloads/croppedImg.jpg")
 
-	binarizedImg, err := PreProcessing.Binarize("../../Downloads/croppedImg.jpg")
-	if err != nil {
-		fmt.Println(err.Error())
-	}
-	writeJpegToDisc(binarizedImg, "../../Downloads/cropBinImg.jpg")
-
-	imgToProcess, err := imageToBytes(*binarizedImg)
+	imgToProcess, err := imageToBytes(*croppedImage)
 	if err != nil {
 		fmt.Println(err.Error())
 		return
