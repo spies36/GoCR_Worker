@@ -44,17 +44,17 @@ func decodePng(file *os.File) (*image.Image, error) {
 
 func decodePdf(file *os.File) (*image.Image, error) {
 	//Convert pdf to jpg
-	jpgFile, err := PreProcessing.Rasterize(file)
+	pngFile, err := PreProcessing.Rasterize(file)
 	if err != nil {
 		return nil, err
 	}
-	defer jpgFile.Close()
+	defer pngFile.Close()
 
-	img, err := jpeg.Decode(jpgFile)
+	img, err := png.Decode(pngFile)
 	if err != nil {
 		return &img, err
 	}
-	err = os.Remove(jpgFile.Name())
+	err = os.Remove(pngFile.Name())
 	if err != nil {
 		return &img, err
 	}

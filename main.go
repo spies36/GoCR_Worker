@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"fmt"
 	"image"
-	"image/jpeg"
+	"image/png"
 	"os"
 
 	"github.com/otiai10/gosseract/v2"
@@ -26,11 +26,11 @@ func main() {
 		fmt.Println(err.Error())
 		return
 	}
-	writeJpegToDisc(img, "../../Downloads/croppedImg.jpg")
+	writePngToDisc(img, "../../Downloads/croppedImg.png")
 
 	croppedImage := PreProcessing.CropImage(*img)
 
-	imgToProcess, err := imageToBytes(*croppedImage)
+	imgToProcess, err := pngImageToBytes(*croppedImage)
 	if err != nil {
 		fmt.Println(err.Error())
 		return
@@ -46,9 +46,29 @@ func main() {
 	fmt.Println(text)
 }
 
-func imageToBytes(img image.Image) ([]byte, error) {
+// func jpgImageToBytes(img image.Image) ([]byte, error) {
+// 	var b bytes.Buffer
+// 	err := jpeg.Encode(&b, img, nil)
+// 	if err != nil {
+// 		return nil, err
+// 	}
+
+// 	return b.Bytes(), nil
+// }
+
+// func writeJpegToDisc(img *image.Image, path string) {
+
+// 	imgByteArr, err := jpgImageToBytes(*img)
+// 	if err != nil {
+// 		fmt.Println(err.Error())
+// 		return
+// 	}
+// 	os.WriteFile(path, imgByteArr, 0777)
+// }
+
+func pngImageToBytes(img image.Image) ([]byte, error) {
 	var b bytes.Buffer
-	err := jpeg.Encode(&b, img, nil)
+	err := png.Encode(&b, img)
 	if err != nil {
 		return nil, err
 	}
@@ -56,9 +76,9 @@ func imageToBytes(img image.Image) ([]byte, error) {
 	return b.Bytes(), nil
 }
 
-func writeJpegToDisc(img *image.Image, path string) {
+func writePngToDisc(img *image.Image, path string) {
 
-	imgByteArr, err := imageToBytes(*img)
+	imgByteArr, err := pngImageToBytes(*img)
 	if err != nil {
 		fmt.Println(err.Error())
 		return
