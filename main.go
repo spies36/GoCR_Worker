@@ -10,22 +10,25 @@ import (
 	"github.com/otiai10/gosseract/v2"
 	"github.com/spies36/GoCR_Worker/FileHandling"
 	"github.com/spies36/GoCR_Worker/PreProcessing"
+	"gopkg.in/gographics/imagick.v2/imagick"
 )
 
-const imgPath string = "../../Downloads/img.jpg"
+const imgPath string = "/home/spies/Downloads/17730027.pdf"
 
 func main() {
 	ocr := gosseract.NewClient()
 	defer ocr.Close()
+	imagick.Initialize()
+	defer imagick.Terminate()
 
 	img, err := FileHandling.GetFileAsImg(imgPath)
 	if err != nil {
 		fmt.Println(err.Error())
 		return
 	}
+	writeJpegToDisc(img, "../../Downloads/croppedImg.jpg")
 
 	croppedImage := PreProcessing.CropImage(*img)
-	writeJpegToDisc(croppedImage, "../../Downloads/croppedImg.jpg")
 
 	imgToProcess, err := imageToBytes(*croppedImage)
 	if err != nil {

@@ -6,6 +6,7 @@ This is a guide to stand up a GoCR worker for Debian.
 1. `sudo apt update` To get fresh package list
 1. Install GoLang
 2. Install Tesseract-OCR
+3. Install ImageMagick's MagickWand
 
 
 
@@ -21,3 +22,20 @@ This is a guide to stand up a GoCR worker for Debian.
 1. `sudo apt install tesseract-ocr libtesseract-dev` Install tesseract and header files/libraries
 2. `sudo apt install tesseract-ocr-eng` was probably already installed
 3. `tesseract --version` Confirm Tesseract version
+
+### Install ImageMagick's MagickWand
+1. sudo apt install `sudo apt install libmagickwand-dev`
+2. remove ghost script PDF policy
+
+- `sudo nano /etc/ImageMagick-6/policy.xml`
+- Remove these lines
+
+```<!-- disable ghostscript format types -->
+<policy domain="coder" rights="none" pattern="PS" />
+<policy domain="coder" rights="none" pattern="PS2" />
+<policy domain="coder" rights="none" pattern="PS3" />
+<policy domain="coder" rights="none" pattern="EPS" />
+<policy domain="coder" rights="none" pattern="PDF" />
+<policy domain="coder" rights="none" pattern="XPS" />
+```
+3. `export CGO_FLAGS_ALLOW='-Xpreprocessor'`

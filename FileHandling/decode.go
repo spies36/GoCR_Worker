@@ -6,6 +6,8 @@ import (
 	"image/jpeg"
 	"image/png"
 	"os"
+
+	"github.com/spies36/GoCR_Worker/PreProcessing"
 )
 
 // Convert file to image.Image and return a pointer
@@ -18,6 +20,8 @@ func DecodeFile(file *os.File, ext string) (*image.Image, error) {
 		img, err = decodeJpg(file)
 	case ".png":
 		img, err = decodePng(file)
+	case ".pdf":
+		img, err = decodePdf(file)
 	default:
 		err = errors.New("Unsupported file type: " + ext)
 		return img, err
@@ -35,5 +39,25 @@ func decodeJpg(file *os.File) (*image.Image, error) {
 // Decode pnh to image.Image
 func decodePng(file *os.File) (*image.Image, error) {
 	img, err := png.Decode(file)
+	return &img, err
+}
+
+func decodePdf(file *os.File) (*image.Image, error) {
+	//Convert pdf to jpg
+	jpgFile, err := PreProcessing.Rasterize(file)
+	if err != nil {
+		return nil, err
+	}
+	defer jpgFile.Close()
+
+	img, err := jpeg.Decode(jpgFile)
+	if err != nil {
+		return &img, err
+	}
+	err = os.Remove(jpgFile.Name())
+	if err != nil {
+		return &img, err
+	}
+
 	return &img, err
 }
