@@ -17,7 +17,7 @@ func CropImage(img image.Image) *image.Image {
 	width := bounds.Dx()
 	height := bounds.Dy()
 
-	cropSize := image.Rect(0, 0, width, height)
+	cropSize := image.Rect(0, 50, width, height/2)
 	croppedImage = img.(subImager).SubImage(cropSize)
 
 	return &croppedImage

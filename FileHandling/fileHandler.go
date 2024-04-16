@@ -1,7 +1,10 @@
 package FileHandling
 
 import (
+	"bytes"
 	"image"
+	"image/jpeg"
+	"image/png"
 	"os"
 	"path/filepath"
 )
@@ -17,4 +20,24 @@ func GetFileAsImg(path string) (*image.Image, error) {
 
 	img, err = DecodeFile(file, filepath.Ext(path))
 	return img, err
+}
+
+func JpgImageToBytes(img image.Image) ([]byte, error) {
+	var b bytes.Buffer
+	err := jpeg.Encode(&b, img, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return b.Bytes(), nil
+}
+
+func PngImageToBytes(img image.Image) ([]byte, error) {
+	var b bytes.Buffer
+	err := png.Encode(&b, img)
+	if err != nil {
+		return nil, err
+	}
+
+	return b.Bytes(), nil
 }
