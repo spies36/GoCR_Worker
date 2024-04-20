@@ -21,7 +21,9 @@ func DecodeFile(file *os.File, ext string) (*image.Image, error) {
 	case ".png":
 		img, err = decodePng(file)
 	case ".pdf":
-		img, err = decodePdf(file)
+		img, err = decodePdfOrTif(file)
+	case ".tif":
+		img, err = decodePdfOrTif(file)
 	default:
 		err = errors.New("Unsupported file type: " + ext)
 		return img, err
@@ -42,7 +44,7 @@ func decodePng(file *os.File) (*image.Image, error) {
 	return &img, err
 }
 
-func decodePdf(file *os.File) (*image.Image, error) {
+func decodePdfOrTif(file *os.File) (*image.Image, error) {
 	//Convert pdf to jpg
 	pngFile, err := PreProcessing.Rasterize(file)
 	if err != nil {

@@ -8,13 +8,13 @@ import (
 	"gopkg.in/gographics/imagick.v2/imagick"
 )
 
-func Rasterize(pdf *os.File) (*os.File, error) {
+func Rasterize(fileToRaster *os.File) (*os.File, error) {
 	magickWand := imagick.NewMagickWand()
 	defer magickWand.Destroy()
 
 	magickWand.SetOption("density", "300")
 
-	err := magickWand.ReadImageFile(pdf)
+	err := magickWand.ReadImageFile(fileToRaster)
 	if err != nil {
 		return nil, err
 	}
