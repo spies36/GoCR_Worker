@@ -7,12 +7,16 @@ import (
 
 /*Format of config.json*/
 type Config struct {
-	//URL to amqp
-	AMQP_Conn_String string
+	//amqps or amqp
+	AMQP_Protocol string
+	// PORT for AMQP
+	AMQP_Port string
 	//Host or VHost
-	AMQP_Host     string
+	AMQP_Host string
+	//User
 	AMQP_Username string
-	AMQP_Pass     string
+	//PAssword
+	AMQP_Pass string
 	//Queue name for receiving messages/consumption
 	RecQueueName string
 	//Optional dead letter queue

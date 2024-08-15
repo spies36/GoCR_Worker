@@ -5,6 +5,7 @@ import (
 )
 
 type amqpClientSuper struct {
+	url          string
 	connection   *amqp.Connection
 	recQueue     *amqp.Queue
 	recQueueDead *amqp.Queue
@@ -15,6 +16,8 @@ type amqpClientSuper struct {
 
 type AmqpClient struct {
 	amqpClientSuper
+	Protocol               string
+	Port                   string
 	Address                string
 	Host                   string
 	Username               string
@@ -26,20 +29,24 @@ type AmqpClient struct {
 
 /*Connect to AMQP*/
 func (client *AmqpClient) Connect() (err error) {
+
+	client.url = client.Protocol + "://" + client.Username + ":" + client.Password + "@" + client.Host + ":" + client.Port
+
 	amqpConfig := amqp.Config{
 		Properties: amqp.NewConnectionProperties(),
 		SASL: []amqp.Authentication{
 			&amqp.PlainAuth{Username: client.Username, Password: client.Password},
 		},
-		Vhost: client.Host,
+		Vhost: client.Username,
 	}
-	connection, err := amqp.DialConfig(client.Address, amqpConfig)
+
+	connection, err := amqp.DialConfig(client.url, amqpConfig)
 	if err != nil {
 		return err
 	}
 
 	client.connection = connection
-	if client.RecQueueDeadLetterName != "" {
+	if client.RecQueueDeadLetterName == "" {
 		err = client.setupRecQueue()
 		if err != nil {
 			return err
@@ -61,7 +68,6 @@ func (client *AmqpClient) Connect() (err error) {
 
 /*Destroy connection*/
 func (client *AmqpClient) Destroy() (err error) {
-	client.recChannel.Close()
 	err = client.connection.Close()
 	return
 }
